@@ -1,0 +1,5 @@
+<resources>
+    <string name="app_name">MVVM</string>
+    <string name="preference_file_key">ir.kawankfb</string>
+    <string name="saved_access_token">access_token</string>
+</resources>
