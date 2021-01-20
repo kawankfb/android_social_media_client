@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="colorPrimary">#6200EE</color>
+    <color name="colorPrimaryDark">#3700B3</color>
+    <color name="colorAccent">#03DAC5</color>
+    <color name="colorBackground">#000000</color>
+    <color name="textColor">#FCFCFC</color>
+    <color name="editTextBackground">#212121</color>
+    <color name="editTextBackgroundUnfocused">#424242</color>
+    <color name="selectedTextview">#82B1FF</color>
+    <color name="hintColor">#616161</color>
+</resources>

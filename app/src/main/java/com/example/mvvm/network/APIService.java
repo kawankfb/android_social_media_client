@@ -11,9 +11,12 @@ import retrofit2.http.GET;
 import retrofit2.http.POST;
 
 public interface APIService {
-    @GET("auth/test")
+    @GET("discussion")
     Call<List<DiscussionModel>> getDiscussionList();
 
     @POST("auth/login")
     Call<ResponseBody> login(@Body RequestBody requestBody);
+
+    @POST("discussion")
+    Call<ResponseBody> createDiscussion(@Body RequestBody requestBody);
 }

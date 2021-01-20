@@ -12,6 +12,8 @@ import android.util.JsonReader;
 import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.LinearLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.mvvm.model.DiscussionModel;
@@ -41,6 +43,24 @@ import retrofit2.converter.gson.GsonConverterFactory;
 public class AuthenticationActivity extends AppCompatActivity  {
     EditText emailEditText;
     EditText passwordEditTet;
+    LinearLayout signUpLayout;
+    LinearLayout loginLayout;
+    TextView signUpTextView;
+    TextView loginTextView;
+    public void loadSignUpLayout(View view){
+        loginLayout.setVisibility(View.INVISIBLE);
+        signUpLayout.setVisibility(View.VISIBLE);
+        loginTextView.setTextColor(getResources().getColor(R.color.textColor));
+        signUpTextView.setTextColor(getResources().getColor(R.color.selectedTextview));
+    }
+    public void loadLoginLayout(View view){
+        loginLayout.setVisibility(View.VISIBLE);
+        signUpLayout.setVisibility(View.INVISIBLE);
+        loginTextView.setTextColor(getResources().getColor(R.color.selectedTextview));
+        signUpTextView.setTextColor(getResources().getColor(R.color.textColor));
+    }
+
+
     public void login(View view){
 String email=emailEditText.getText().toString();
 String password=passwordEditTet.getText().toString();
@@ -101,6 +121,12 @@ String jsonString="{}";
         setContentView(R.layout.activity_authentication);
         emailEditText=(EditText)findViewById(R.id.emailEditText);
         passwordEditTet=(EditText)findViewById(R.id.passwordEditText);
+
+        signUpLayout=(LinearLayout)findViewById(R.id.signup_layout);
+        loginLayout=(LinearLayout)findViewById(R.id.login_layout);
+        loginTextView=(TextView)findViewById(R.id.login_text_view);
+        signUpTextView=(TextView)findViewById(R.id.signup_textview);
+
         SharedPreferences sharedPreferences=getContext().getSharedPreferences(getString(R.string.preference_file_key), Context.MODE_PRIVATE);
         if(sharedPreferences.contains(getString(R.string.saved_access_token)))
         {
