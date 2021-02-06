@@ -9,4 +9,6 @@
     <color name="editTextBackgroundUnfocused">#424242</color>
     <color name="selectedTextview">#82B1FF</color>
     <color name="hintColor">#616161</color>
+    <color name="cursorColor">#ffffffff</color>
+
 </resources>

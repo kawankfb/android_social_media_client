@@ -4,4 +4,5 @@
     <string name="saved_access_token">access_token</string>
     <string name="log_in">log in</string>
     <string name="sign_up">sign up</string>
+    <string name="send_icon">"@drawable/baseline_send_black_48"</string>
 </resources>

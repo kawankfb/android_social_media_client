@@ -9,4 +9,6 @@
     <color name="textColor">#000000</color>
     <color name="selectedTextview">#F50057</color>
     <color name="hintColor">#9E9E9E</color>
+    <color name="randomColor">#F50057</color>
+    <color name="cursorColor">#ff000000</color>
 </resources>

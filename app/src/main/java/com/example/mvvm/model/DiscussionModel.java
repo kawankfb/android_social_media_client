@@ -1,10 +1,12 @@
 package com.example.mvvm.model;
 
+import com.example.mvvm.network.RetrofitInstance;
+
 public class DiscussionModel {
     private String title;
 
     public String getUrl() {
-        return url;
+        return RetrofitInstance.BASE_URL+url;
     }
 
     public void setUrl(String url) {

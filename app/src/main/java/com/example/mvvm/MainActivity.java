@@ -8,12 +8,17 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.content.Context;
+import android.content.Intent;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.os.CountDownTimer;
+import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
+import android.widget.Toolbar;
 
 import com.example.mvvm.adapter.DiscussionListAdapter;
 import com.example.mvvm.model.DiscussionModel;
@@ -25,6 +30,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.List;
+import java.util.Random;
 
 import okhttp3.MediaType;
 import okhttp3.RequestBody;
@@ -40,6 +46,7 @@ public class MainActivity extends AppCompatActivity implements DiscussionListAda
     private DiscussionListViewModel viewModel;
     EditText titleEditText;
     CountDownTimer countDownTimer;
+    Toolbar toolbar;
 
 
     public void createDiscussion(View view) {
@@ -65,7 +72,7 @@ public class MainActivity extends AppCompatActivity implements DiscussionListAda
                         return;
                     }
                     viewModel.makeApiCall();
-
+                    titleEditText.setText(null);
                 } catch (Exception e) {
                     Toast.makeText(getContext(), "Something went wrong please try again", Toast.LENGTH_LONG).show();
 
@@ -84,6 +91,7 @@ public class MainActivity extends AppCompatActivity implements DiscussionListAda
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        toolbar=(Toolbar)findViewById(R.id.mainToolbar);
         titleEditText = (EditText) findViewById(R.id.titleEditText);
         RecyclerView discussionRecyclerView = (RecyclerView) findViewById(R.id.discussionlistview);
         final TextView noDiscussionFound = (TextView) findViewById(R.id.noDiscussionFoundTextView);
@@ -105,7 +113,7 @@ public class MainActivity extends AppCompatActivity implements DiscussionListAda
             }
         });
         viewModel.makeApiCall();
-        countDownTimer = new CountDownTimer(3000,1000) {
+        countDownTimer = new CountDownTimer(30000,15000) {
             @Override
             public void onTick(long millisUntilFinished) {
 
@@ -125,8 +133,18 @@ public class MainActivity extends AppCompatActivity implements DiscussionListAda
 
     @Override
     public void onDiscussionClick(DiscussionModel discussionModel) {
-        Toast.makeText(this,"Clicked Discussion : "+discussionModel.getTitle(),Toast.LENGTH_LONG).show();
-        viewModel.makeApiCall();
+        Intent intent =new Intent(this,ChatActivity.class);
+        startActivity(intent);
+        //        Toast.makeText(this,"Clicked Discussion : "+discussionModel.getTitle(),Toast.LENGTH_LONG).show();
+//        viewModel.makeApiCall();
+    }
+
+    public void changePage(View view) {
+        ImageView temp=(ImageView)view;
+        String tag=temp.getTag().toString();
+        Log.d("clicked tag is :",tag);
+        Intent intent=new Intent(this,CreateDiscussionActivity.class);
+        startActivity(intent);
     }
 }
 
