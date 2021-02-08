@@ -24,7 +24,7 @@ import java.util.Random;
 
 public class DiscussionListAdapter extends RecyclerView.Adapter<DiscussionListAdapter.MyViewHolder> {
     private Context context;
-    private ItemClickListener itemClickListener;
+    private ItemListener itemListener;
     Random random;
     public void setDiscussionList(List<DiscussionModel> discussionList) {
         this.discussionList = discussionList;
@@ -33,10 +33,10 @@ public class DiscussionListAdapter extends RecyclerView.Adapter<DiscussionListAd
 
     private List<DiscussionModel> discussionList;
 
-    public DiscussionListAdapter(Context context, List<DiscussionModel> discussionList,ItemClickListener itemClickListener) {
+    public DiscussionListAdapter(Context context, List<DiscussionModel> discussionList, ItemListener itemListener) {
         this.context = context;
         this.discussionList = discussionList;
-        this.itemClickListener=itemClickListener;
+        this.itemListener = itemListener;
         random = new Random();
     }
 
@@ -53,7 +53,14 @@ public class DiscussionListAdapter extends RecyclerView.Adapter<DiscussionListAd
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                itemClickListener.onDiscussionClick(discussionList.get(position));
+                itemListener.onDiscussionClick(discussionList.get(position));
+            }
+        });
+        holder.itemView.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View v) {
+                itemListener.onDiscussionHold(discussionList.get(position));
+                return true;
             }
         });
         Log.d("image_URL",this.discussionList.get(position).getUrl());
@@ -122,7 +129,8 @@ public class DiscussionListAdapter extends RecyclerView.Adapter<DiscussionListAd
             discussion_last_message_time=(TextView)itemView.findViewById(R.id.discussion_last_message_time);
         }
     }
-    public interface ItemClickListener{
+    public interface ItemListener {
         public void onDiscussionClick(DiscussionModel discussionModel);
+        public void onDiscussionHold(DiscussionModel discussionModel);
     }
 }

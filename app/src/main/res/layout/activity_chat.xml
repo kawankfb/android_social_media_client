@@ -7,6 +7,30 @@
     android:layout_height="match_parent"
     tools:context=".ChatActivity">
 
+    <Toolbar
+        android:layout_width="match_parent"
+        android:background="@color/colorPrimary"
+        android:layout_height="?attr/actionBarSize"
+        android:id="@+id/chatToolbar">
+
+    </Toolbar>
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/post_list_view"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/chatToolbar"
+        android:layout_above="@id/sendLayout"
+        />
+    <TextView
+        android:id="@+id/noPostFoundTextView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/chatToolbar"
+        android:layout_above="@id/sendLayout"
+        android:visibility="invisible"
+        android:text="No Results Found"
+        android:textStyle="bold"
+        android:textSize="25sp"/>
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="60sp"
@@ -26,7 +50,7 @@
             android:background="@drawable/login_signup_button"/>
         <EditText
             android:layout_width="0dp"
-            android:id="@+id/titleEditText"
+            android:id="@+id/postEditText"
             android:layout_weight="0.9"
             android:textColor="@color/textColor"
             android:background="@color/editTextBackground"

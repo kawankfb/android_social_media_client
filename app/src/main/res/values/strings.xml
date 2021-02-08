@@ -8,4 +8,6 @@
     <string name="email">Email</string>
     <string name="password">Password</string>
     <string name="send_icon">"@drawable/baseline_send_white_48"</string>
+    <string name="create">create</string>
+    <string name="cancel">cancel</string>
 </resources>

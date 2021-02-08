@@ -9,7 +9,6 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.util.Log;
@@ -22,24 +21,11 @@ import android.widget.Toolbar;
 
 import com.example.mvvm.adapter.DiscussionListAdapter;
 import com.example.mvvm.model.DiscussionModel;
-import com.example.mvvm.network.APIService;
-import com.example.mvvm.network.RetrofitInstance;
 import com.example.mvvm.viewmodel.DiscussionListViewModel;
 
-import org.json.JSONException;
-import org.json.JSONObject;
-
 import java.util.List;
-import java.util.Random;
 
-import okhttp3.MediaType;
-import okhttp3.RequestBody;
-import okhttp3.ResponseBody;
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
-
-public class MainActivity extends AppCompatActivity implements DiscussionListAdapter.ItemClickListener {
+public class MainActivity extends AppCompatActivity implements DiscussionListAdapter.ItemListener {
 
     private List<DiscussionModel> discussionModelList;
     private DiscussionListAdapter adapter;
@@ -49,42 +35,6 @@ public class MainActivity extends AppCompatActivity implements DiscussionListAda
     Toolbar toolbar;
 
 
-    public void createDiscussion(View view) {
-        String title = titleEditText.getText().toString();
-        String url = "http://kawankfb.ir/pictures/5.jpg";
-        String jsonString = "{}";
-        JSONObject jsonObject = new JSONObject();
-        try {
-            jsonObject.put("title", title);
-            jsonObject.put("url", url);
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-        jsonString = jsonObject.toString();
-        RequestBody requestBody = RequestBody.create(MediaType.parse("application/json"), jsonString);
-        APIService apiService = RetrofitInstance.getRetrofitClient().create(APIService.class);
-        apiService.createDiscussion(requestBody).enqueue(new Callback<ResponseBody>() {
-            @Override
-            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
-                try {
-                    if (!response.isSuccessful()) {
-                        Toast.makeText(getContext(), "Something went wrong , error message : " + response.errorBody().string(), Toast.LENGTH_LONG).show();
-                        return;
-                    }
-                    viewModel.makeApiCall();
-                    titleEditText.setText(null);
-                } catch (Exception e) {
-                    Toast.makeText(getContext(), "Something went wrong please try again", Toast.LENGTH_LONG).show();
-
-                }
-            }
-
-            @Override
-            public void onFailure(Call<ResponseBody> call, Throwable t) {
-                Toast.makeText(getContext(), "Something went wrong please try again", Toast.LENGTH_LONG).show();
-            }
-        });
-    }
 
 
     @Override
@@ -92,7 +42,6 @@ public class MainActivity extends AppCompatActivity implements DiscussionListAda
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         toolbar=(Toolbar)findViewById(R.id.mainToolbar);
-        titleEditText = (EditText) findViewById(R.id.titleEditText);
         RecyclerView discussionRecyclerView = (RecyclerView) findViewById(R.id.discussionlistview);
         final TextView noDiscussionFound = (TextView) findViewById(R.id.noDiscussionFoundTextView);
         noDiscussionFound.setVisibility(View.INVISIBLE);
@@ -107,13 +56,14 @@ public class MainActivity extends AppCompatActivity implements DiscussionListAda
                 if (discussionModels != null) {
                     discussionModelList = discussionModels;
                     adapter.setDiscussionList(discussionModels);
+                    noDiscussionFound.setVisibility(View.INVISIBLE);
                 } else {
                     noDiscussionFound.setVisibility(View.VISIBLE);
                 }
             }
         });
         viewModel.makeApiCall();
-        countDownTimer = new CountDownTimer(30000,15000) {
+        countDownTimer = new CountDownTimer(5000,5000) {
             @Override
             public void onTick(long millisUntilFinished) {
 
@@ -134,10 +84,18 @@ public class MainActivity extends AppCompatActivity implements DiscussionListAda
     @Override
     public void onDiscussionClick(DiscussionModel discussionModel) {
         Intent intent =new Intent(this,ChatActivity.class);
+        intent.putExtra("EXTRA_DISCUSSION_ID", discussionModel.getDiscussion_id());
         startActivity(intent);
-        //        Toast.makeText(this,"Clicked Discussion : "+discussionModel.getTitle(),Toast.LENGTH_LONG).show();
+//                Toast.makeText(this,"Clicked Discussion : "+discussionModel.getDiscussion_id(),Toast.LENGTH_LONG).show();
 //        viewModel.makeApiCall();
     }
+
+    @Override
+    public void onDiscussionHold(DiscussionModel discussionModel) {
+        Toast.makeText(this,"Clicked Discussion : "+discussionModel.getDiscussion_id(),Toast.LENGTH_LONG).show();
+
+    }
+
 
     public void changePage(View view) {
         ImageView temp=(ImageView)view;
@@ -145,6 +103,12 @@ public class MainActivity extends AppCompatActivity implements DiscussionListAda
         Log.d("clicked tag is :",tag);
         Intent intent=new Intent(this,CreateDiscussionActivity.class);
         startActivity(intent);
+    }
+
+    @Override
+    protected void onPostResume() {
+        super.onPostResume();
+        viewModel.makeApiCall();
     }
 }
 
