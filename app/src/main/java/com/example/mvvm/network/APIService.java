@@ -16,6 +16,14 @@ public interface APIService {
     @GET("discussion")
     Call<List<DiscussionModel>> getDiscussionList();
 
+
+    @GET("followed_discussions")
+    Call<List<DiscussionModel>> getFollowedDiscussionList();
+
+    @GET("personal_discussions")
+    Call<List<DiscussionModel>> getPersonalDiscussionList();
+
+
     @GET("posts/{discussion_id}")
     Call<List<PostModel>> getPostList(@Path("discussion_id") int discussion_id);
 

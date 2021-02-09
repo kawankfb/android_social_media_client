@@ -34,6 +34,7 @@
         android:layout_below="@id/mainToolbar"
         android:layout_above="@id/mainNavigationLayout"
         android:visibility="invisible"
+        android:gravity="center"
         android:text="No Results Found"
         android:textStyle="bold"
         android:textSize="25sp"/>
@@ -49,31 +50,47 @@
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
+            android:layout_margin="10sp"
             android:id="@+id/followedDiscussionsImageView"
             android:tag="followedDiscussions"
             android:onClick="changePage"
-            android:background="@drawable/login_signup_button"
-            android:src="@drawable/baseline_attach_file_48"
+            android:background="@drawable/bg_edittext"
+            android:src="@drawable/baseline_star_48"
             android:padding="5sp"/>
         <ImageView
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
+            android:layout_margin="10sp"
             android:id="@+id/categorizedDiscussionsImageView"
             android:onClick="changePage"
             android:tag="categorizedDiscussions"
-            android:background="@drawable/login_signup_button"
-            android:src="@drawable/baseline_attach_file_48"
+            android:background="@drawable/bg_edittext"
+            android:src="@drawable/ic_home_black_24dp"
             android:padding="5sp"/>
         <ImageView
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
+            android:layout_margin="10sp"
+
             android:id="@+id/trendingDiscussionsImageView"
             android:onClick="changePage"
             android:tag="trendingDiscussions"
             android:background="@drawable/login_signup_button"
-            android:src="@drawable/baseline_attach_file_48"
+            android:src="@drawable/ic_whatshot_black_24dp"
+            android:padding="5sp"/>
+        <ImageView
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:layout_margin="10sp"
+
+            android:id="@+id/personalDiscussionsImageView"
+            android:onClick="changePage"
+            android:tag="personalDiscussions"
+            android:background="@drawable/bg_edittext"
+            android:src="@drawable/ic_person_black_24dp"
             android:padding="5sp"/>
     </LinearLayout>
 

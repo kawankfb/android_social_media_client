@@ -9,6 +9,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.util.Log;
@@ -33,6 +34,7 @@ public class MainActivity extends AppCompatActivity implements DiscussionListAda
     EditText titleEditText;
     CountDownTimer countDownTimer;
     Toolbar toolbar;
+    String selectedPage="trendingDiscussions";
 
 
 
@@ -62,7 +64,7 @@ public class MainActivity extends AppCompatActivity implements DiscussionListAda
                 }
             }
         });
-        viewModel.makeApiCall();
+        viewModel.makeApiCall(selectedPage);
         countDownTimer = new CountDownTimer(5000,5000) {
             @Override
             public void onTick(long millisUntilFinished) {
@@ -71,7 +73,7 @@ public class MainActivity extends AppCompatActivity implements DiscussionListAda
 
             @Override
             public void onFinish() {
-    viewModel.makeApiCall();
+    viewModel.makeApiCall(selectedPage);
     countDownTimer.start();
             }
         };
@@ -99,16 +101,28 @@ public class MainActivity extends AppCompatActivity implements DiscussionListAda
 
     public void changePage(View view) {
         ImageView temp=(ImageView)view;
+
         String tag=temp.getTag().toString();
+        if (selectedPage.equals(tag))
+            return;
         Log.d("clicked tag is :",tag);
-        Intent intent=new Intent(this,CreateDiscussionActivity.class);
-        startActivity(intent);
+        Drawable background = getResources().getDrawable( R.drawable.bg_edittext);
+        findViewById(R.id.followedDiscussionsImageView).setBackground(background);
+        findViewById(R.id.categorizedDiscussionsImageView).setBackground(background);
+        findViewById(R.id.trendingDiscussionsImageView).setBackground(background);
+        findViewById(R.id.personalDiscussionsImageView).setBackground(background);
+        background = getResources().getDrawable( R.drawable.login_signup_button);
+        temp.setBackground(background);
+        selectedPage=tag;
+        viewModel.makeApiCall(selectedPage);
+//        Intent intent=new Intent(this,CreateDiscussionActivity.class);
+//        startActivity(intent);
     }
 
     @Override
     protected void onPostResume() {
         super.onPostResume();
-        viewModel.makeApiCall();
+        viewModel.makeApiCall(selectedPage);
     }
 }
 

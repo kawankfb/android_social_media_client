@@ -27,20 +27,72 @@ public class DiscussionListViewModel extends ViewModel {
     discussionList=new MutableLiveData<>();
     }
 
-    public void makeApiCall(){
+    public void makeApiCall(String tag){
+        if (tag==null)
+            getTrending();
+        else if (tag.equals("followedDiscussions")) {
+            getFollowed();
+        }
+        else if (tag.equals("categorizedDiscussions"))
+        {
+
+        }
+        else if (tag.equals("personalDiscussions")){
+        getPersonal();
+        }
+        else
+            getTrending();
+    }
+
+    private void getFollowed() {
+        APIService apiService = RetrofitInstance.getRetrofitClient().create(APIService.class);
+        Call<List<DiscussionModel>> call=apiService.getFollowedDiscussionList();
+        call.enqueue(new Callback<List<DiscussionModel>>() {
+            @Override
+            public void onResponse(Call<List<DiscussionModel>> call, Response<List<DiscussionModel>> response) {
+                Log.d("laravel_response",response.toString());
+                discussionList.postValue(response.body());
+            }
+
+            @Override
+            public void onFailure(Call<List<DiscussionModel>> call, Throwable t) {
+                Log.d("laravel_response","request failed");
+                discussionList.postValue(null);
+            }
+        });
+    }
+    private void getPersonal() {
+        APIService apiService = RetrofitInstance.getRetrofitClient().create(APIService.class);
+        Call<List<DiscussionModel>> call=apiService.getPersonalDiscussionList();
+        call.enqueue(new Callback<List<DiscussionModel>>() {
+            @Override
+            public void onResponse(Call<List<DiscussionModel>> call, Response<List<DiscussionModel>> response) {
+                Log.d("laravel_response",response.toString());
+                discussionList.postValue(response.body());
+            }
+
+            @Override
+            public void onFailure(Call<List<DiscussionModel>> call, Throwable t) {
+                Log.d("laravel_response","request failed");
+                discussionList.postValue(null);
+            }
+        });
+    }
+
+    private void getTrending(){
         APIService apiService = RetrofitInstance.getRetrofitClient().create(APIService.class);
         Call<List<DiscussionModel>> call=apiService.getDiscussionList();
         call.enqueue(new Callback<List<DiscussionModel>>() {
             @Override
             public void onResponse(Call<List<DiscussionModel>> call, Response<List<DiscussionModel>> response) {
                 Log.d("laravel_response",response.toString());
-discussionList.postValue(response.body());
+                discussionList.postValue(response.body());
             }
 
             @Override
             public void onFailure(Call<List<DiscussionModel>> call, Throwable t) {
                 Log.d("laravel_response","request failed");
-discussionList.postValue(null);
+                discussionList.postValue(null);
             }
         });
     }

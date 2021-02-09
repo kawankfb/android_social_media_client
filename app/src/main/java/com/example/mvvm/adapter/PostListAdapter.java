@@ -25,7 +25,6 @@ import java.util.Random;
 public class PostListAdapter extends RecyclerView.Adapter<PostListAdapter.MyViewHolder> {
     private Context context;
     private ItemListener itemListener;
-    Random random;
     public void setPostList(List<PostModel> postList) {
         this.postList = postList;
         notifyDataSetChanged();
@@ -37,7 +36,6 @@ public class PostListAdapter extends RecyclerView.Adapter<PostListAdapter.MyView
         this.context = context;
         this.postList = postList;
         this.itemListener = itemListener;
-        random = new Random();
     }
 
     @NonNull
@@ -89,9 +87,10 @@ public class PostListAdapter extends RecyclerView.Adapter<PostListAdapter.MyView
 
         }
         Drawable myIcon = context.getResources().getDrawable( R.drawable.profile_default);
-        int red=random.nextInt(128)+64;
-        int blue=random.nextInt(128)+64;
-        int green=random.nextInt(128)+64;
+        int toGenerateColor=(this.postList.get(position).getUser_id()%(Integer.MAX_VALUE/16))*4;
+        int red=toGenerateColor%128+64;
+        int blue=(toGenerateColor*2)%128+64;
+        int green=(toGenerateColor*3)%128+64;
         ColorFilter filter = new LightingColorFilter( Color.BLACK, Color.rgb(red,blue,green));
         myIcon.setColorFilter(filter);
         holder.postNoProfileTextView.setBackground(myIcon);

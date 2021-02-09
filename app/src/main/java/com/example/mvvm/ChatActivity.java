@@ -120,7 +120,7 @@ public class ChatActivity extends AppCompatActivity implements PostListAdapter.I
             }
         });
         viewModel.makeApiCall(discussion_id);
-        countDownTimer = new CountDownTimer(2000,1000) {
+        countDownTimer = new CountDownTimer(5000,1000) {
             @Override
             public void onTick(long millisUntilFinished) {
 

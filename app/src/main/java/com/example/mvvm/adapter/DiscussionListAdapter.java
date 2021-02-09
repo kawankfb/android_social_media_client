@@ -25,7 +25,6 @@ import java.util.Random;
 public class DiscussionListAdapter extends RecyclerView.Adapter<DiscussionListAdapter.MyViewHolder> {
     private Context context;
     private ItemListener itemListener;
-    Random random;
     public void setDiscussionList(List<DiscussionModel> discussionList) {
         this.discussionList = discussionList;
         notifyDataSetChanged();
@@ -37,7 +36,6 @@ public class DiscussionListAdapter extends RecyclerView.Adapter<DiscussionListAd
         this.context = context;
         this.discussionList = discussionList;
         this.itemListener = itemListener;
-        random = new Random();
     }
 
     @NonNull
@@ -93,9 +91,15 @@ public class DiscussionListAdapter extends RecyclerView.Adapter<DiscussionListAd
 
         }
         Drawable myIcon = context.getResources().getDrawable( R.drawable.profile_default);
-        int red=random.nextInt(128)+64;
-        int blue=random.nextInt(128)+64;
-        int green=random.nextInt(128)+64;
+        char toGenerateColor=0;
+        for (int i = 0; i <title.length() ; i++) {
+            if (Character.MAX_VALUE-title.charAt(i)>toGenerateColor)
+            toGenerateColor= (char) (toGenerateColor+title.charAt(i));
+            else break;
+        }
+        int red=toGenerateColor%128+64;
+        int blue=(toGenerateColor*2)%128+64;
+        int green=(toGenerateColor*3)%128+64;
         ColorFilter filter = new LightingColorFilter( Color.BLACK, Color.rgb(red,blue,green));
         myIcon.setColorFilter(filter);
         holder.discussionNoProfileTextView.setBackground(myIcon);
