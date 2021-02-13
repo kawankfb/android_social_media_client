@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+
+    <group android:checkableBehavior="single">
+
+
+        <item
+            android:title="@string/create_a_discussion"
+            android:id="@+id/create_discussion_button"
+            android:checkable="false"
+            android:icon="@drawable/ic_add_circle_outline_white_24dp" />
+
+        <item
+            android:title="@string/log_out"
+            android:id="@+id/logout_button"
+            android:checkable="false"
+            android:icon="@drawable/ic_home_black_24dp" />
+        <item
+            android:title="@string/edit_profile"
+            android:id="@+id/edit_profile"
+            android:checkable="false"
+            android:icon="@drawable/ic_person_black_24dp" />
+
+
+    </group>
+
+
+</menu>

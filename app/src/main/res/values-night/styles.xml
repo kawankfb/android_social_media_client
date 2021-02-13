@@ -7,4 +7,10 @@
         <item name="colorAccent">@color/colorAccent</item>
         <item name="android:textColor">@color/textColor</item>
     </style>
+    <style name="MyAlertDialogStyle" parent="Theme.AppCompat.Dialog.Alert">
+
+        <item name="android:textColorPrimary">#FFFFFF</item>
+        <item name="android:textColor">@color/colorBackground</item>
+        <item name="android:textSize">@null</item>
+    </style>
 </resources>

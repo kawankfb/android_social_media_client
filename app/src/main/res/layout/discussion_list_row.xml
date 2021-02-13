@@ -40,13 +40,13 @@
         <TextView
             android:layout_width="match_parent"
             android:layout_weight="0.6"
-            android:gravity="left"
+            android:gravity="start"
             android:textSize="25sp"
             android:textStyle="bold"
             android:id="@+id/discussion_title_text"
             android:layout_height="0sp"/>
         <TextView
-            android:gravity="left"
+            android:gravity="start"
             android:layout_width="match_parent"
             android:layout_weight="0.4"
             android:textSize="18sp"

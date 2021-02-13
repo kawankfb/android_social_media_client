@@ -44,6 +44,7 @@ public class ChatActivity extends AppCompatActivity implements PostListAdapter.I
     }
     EditText postEditText;
     private int discussion_id;
+    private int user_id;
     private List<PostModel> postModelList;
     private PostListAdapter adapter;
     private PostListViewModel viewModel;
@@ -98,12 +99,13 @@ public class ChatActivity extends AppCompatActivity implements PostListAdapter.I
         setContentView(R.layout.activity_chat);
         postEditText=(EditText)findViewById(R.id.postEditText);
         discussion_id= getIntent().getIntExtra("EXTRA_DISCUSSION_ID",0);
+        user_id= getIntent().getIntExtra("USER_ID",-1);
         RecyclerView postRecyclerView = (RecyclerView) findViewById(R.id.post_list_view);
         final TextView noPostFound = (TextView) findViewById(R.id.noPostFoundTextView);
         noPostFound.setVisibility(View.INVISIBLE);
         LinearLayoutManager layoutManager = new GridLayoutManager(this, 1);
         postRecyclerView.setLayoutManager(layoutManager);
-        adapter = new PostListAdapter(this, postModelList, this);
+        adapter = new PostListAdapter(this, postModelList, this,user_id);
         postRecyclerView.setAdapter(adapter);
         viewModel = ViewModelProviders.of(this).get(PostListViewModel.class);
         viewModel.getPostListObserver().observe(this, new Observer<List<PostModel>>() {

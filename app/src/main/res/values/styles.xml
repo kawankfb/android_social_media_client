@@ -11,4 +11,11 @@
         <item name="android:textCursorDrawable">@drawable/cursor_drawable</item>
         -->
     </style>
+    <style name="MyAlertDialogStyle" parent="Theme.AppCompat.Dialog.Alert">
+        <item name="android:textColorPrimary">#FFFFFF</item>
+
+
+        <item name="android:textColor">@color/colorBackground</item>
+        <item name="android:textSize">@null</item>
+    </style>
 </resources>

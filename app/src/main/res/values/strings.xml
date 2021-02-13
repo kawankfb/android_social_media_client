@@ -10,4 +10,23 @@
     <string name="send_icon">"@drawable/baseline_send_white_48"</string>
     <string name="create">create</string>
     <string name="cancel">cancel</string>
+    <string name="create_a_discussion">create a discussion</string>
+    <string name="search">search</string>
+    <string name="name">Name</string>
+    <string name="confirm_npassword">Confirm\nPassword</string>
+    <string name="my_image">profile image</string>
+    <string name="kawan_farhadi_baneh">Kawan Farhadi baneh</string>
+    <string name="example_gmail_com">example@gmail.com</string>
+    <string name="spam">spam</string>
+    <string name="trash">trash</string>
+    <string name="all_mail">all mail</string>
+    <string name="subheader">" sub header"</string>
+    <string name="drafts">drafts</string>
+    <string name="sent_mail">sent mail</string>
+    <string name="starred">starred</string>
+    <string name="inbox">inbox</string>
+    <string name="open_drawer">open drawer</string>
+    <string name="close_drawer">close drawer</string>
+    <string name="log_out">Log out</string>
+    <string name="edit_profile">Edit profile</string>
 </resources>

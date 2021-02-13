@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+<item android:title="item 1"
+    android:id="@+id/item1_id"
+    />
+    <item android:title="item 2"
+        android:id="@+id/item2_id"
+        />
+    <item android:title="item 3"
+        android:id="@+id/item3_id"
+        />
+    <item android:title="item 4"
+        android:id="@+id/item4_id"
+        />
+    <item android:title="@string/search"
+        android:id="@+id/search_action_main_id"
+        android:icon="@drawable/ic_search_white_24dp"
+        app:showAsAction="ifRoom"/>
+    <item android:title="@string/create_a_discussion"
+        android:id="@+id/create_discussion_action_main_id"
+        android:icon="@drawable/ic_add_circle_outline_white_24dp"
+        app:showAsAction="ifRoom"/>
+</menu>

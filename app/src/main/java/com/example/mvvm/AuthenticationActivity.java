@@ -1,11 +1,13 @@
 package com.example.mvvm;
 
 import androidx.annotation.RequiresApi;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.app.DatePickerDialog;
 import android.app.Dialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Build;
@@ -51,7 +53,8 @@ public class AuthenticationActivity extends AppCompatActivity  {
     EditText signUpEmailEditText;
     EditText passwordEditText;
     EditText signUpPasswordEditText;
-    EditText nameEditTet;
+    EditText signUpConfirmPasswordEditText;
+    EditText nameEditText;
     EditText lastNameEditTet;
     EditText phoneNumberEditText;
     EditText userTagEditText;
@@ -140,12 +143,50 @@ String jsonString="{}";
     }
 
             public void signUp(View view){
-                String email=emailEditText.getText().toString();
-                String password=passwordEditText.getText().toString();
+                String email=signUpEmailEditText.getText().toString();
+                String name=nameEditText.getText().toString();
+                String password=signUpPasswordEditText.getText().toString();
+                String confirmPassword=signUpConfirmPasswordEditText.getText().toString();
+                //client side error handling
+                if (!email.contains("@")
+                        || !email.contains(".")
+                        || email.contains("/")
+                        || name.length()<3
+                        || password.length()<4
+                        || confirmPassword.length()<4
+                        || !password.equals(confirmPassword))
+                {//we have an error
+                    AlertDialog.Builder builder=new AlertDialog.Builder(this,R.style.MyAlertDialogStyle);
+                    builder.setTitle("Error");
+                    if (!email.contains("@")
+                            || !email.contains(".")
+                            || email.contains("/") )
+                        builder.setMessage("Please provide a valid e-mail address");
+                    else if (name.length()<3)
+                        builder.setMessage("Please provide a valid name (more than 3 characters");
+                    else if (!password.equals(confirmPassword))
+                        builder.setMessage("Your password doesn't match the confirm password");
+                    else if (password.length()<4 )
+                        builder.setMessage("Please provide a stronger password ( 4 characters is the minimum )");
+                    builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int id) {
+                            dialog.cancel();
+                        }
+                    });
+                    AlertDialog alert = builder.create();
+                    //Setting the title manually
+                    alert.setTitle("Error");
+
+                    alert.show();
+                    return;
+                }
+
+
                 String jsonString="{}";
                 JSONObject jsonObject=new JSONObject();
                 try {
                     jsonObject.put("email",email);
+                    jsonObject.put("name",name);
                     jsonObject.put("password",password);
                 } catch (JSONException e) {
                     e.printStackTrace();
@@ -153,7 +194,7 @@ String jsonString="{}";
                 jsonString=jsonObject.toString();
                 RequestBody requestBody =RequestBody.create(MediaType.parse("application/json"),jsonString);
                 APIService apiService = RetrofitInstance.getNotAuthenticatedRetrofitClient().create(APIService.class);
-                apiService.login(requestBody).enqueue(new Callback<ResponseBody>() {
+                apiService.signup(requestBody).enqueue(new Callback<ResponseBody>() {
                     @Override
                     public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
                         try {
@@ -165,20 +206,13 @@ String jsonString="{}";
                             String json=response.body().string();
                             JsonElement jsonElement = new JsonParser().parse(json);
                             JsonObject jsonObject = jsonElement.getAsJsonObject();
-                            if (!jsonObject.has("access_token")){
+                            if (!jsonObject.has("id")){
                                 Toast.makeText(getContext(),"Entered credentials were invalid , error message :",Toast.LENGTH_LONG).show();
                                 return;
                             }
-                            RetrofitInstance.setToken(jsonObject.get("access_token").getAsString());
-                            Toast.makeText(getContext(),"Succesful Login",Toast.LENGTH_LONG).show();
-                            SharedPreferences sharedPreferences=getContext().getSharedPreferences(
-                                    getString(R.string.preference_file_key), Context.MODE_PRIVATE);
-                            SharedPreferences.Editor editor = sharedPreferences.edit();
-                            editor.putString(getString(R.string.saved_access_token), jsonObject.get("access_token").getAsString());
-                            editor.apply();
-                            Intent intent=new Intent(getContext(),MainActivity.class);
-                            startActivity(intent);
-                            finish();
+                            emailEditText.setText(signUpEmailEditText.getText());
+                            passwordEditText.setText(signUpPasswordEditText.getText());
+                            login(view);
                         }catch (Exception e){
                             Toast.makeText(getContext(),"Something went wrong please try again",Toast.LENGTH_LONG).show();
 
@@ -200,6 +234,10 @@ String jsonString="{}";
         setContentView(R.layout.activity_authentication);
         emailEditText=(EditText)findViewById(R.id.emailEditText);
         passwordEditText=(EditText)findViewById(R.id.passwordEditText);
+        nameEditText=(EditText)findViewById(R.id.nameEditText);
+        signUpEmailEditText=(EditText)findViewById(R.id.signUpEmailEditText);
+        signUpPasswordEditText=(EditText)findViewById(R.id.signUpPasswordEditText);
+        signUpConfirmPasswordEditText=(EditText)findViewById(R.id.signUpConfirmPasswordEditText);
 
         signUpLayout=(LinearLayout)findViewById(R.id.signup_layout);
         loginLayout=(LinearLayout)findViewById(R.id.login_layout);
@@ -238,4 +276,5 @@ String jsonString="{}";
     private Context getContext(){
         return this;
     }
+
 }

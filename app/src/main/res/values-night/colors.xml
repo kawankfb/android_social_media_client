@@ -10,5 +10,8 @@
     <color name="selectedTextview">#82B1FF</color>
     <color name="hintColor">#616161</color>
     <color name="cursorColor">#ffffffff</color>
+    <color name="chat_background">#455A64</color>
+    <color name="personal_chat_background">#1976D2</color>
+
 
 </resources>

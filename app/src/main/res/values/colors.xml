@@ -11,4 +11,6 @@
     <color name="hintColor">#9E9E9E</color>
     <color name="randomColor">#F50057</color>
     <color name="cursorColor">#ff000000</color>
+    <color name="chat_background">#CFD8DC</color>
+    <color name="personal_chat_background">#BBDEFB</color>
 </resources>
