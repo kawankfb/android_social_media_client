@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="post_options">
+        <item>Copy text</item>
+        <item>Report post</item>
+        <item>Report User</item>
+        <item>Report Discussion</item>
+    </string-array>
+    <string-array name="personal_post_options">
+        <item>Delete</item>
+        <item>Edit</item>
+        <item>Copy text</item>
+    </string-array>
+
+    <string-array name="personal_discussion_options">
+        <item>Delete</item>
+        <item>Edit</item>
+    </string-array>
+    <string-array name="trending_discussion_options" >
+        <item>Add to followed discussions</item>
+        <item>Report</item>
+    </string-array>
+    <string-array name="followed_discussion_options" >
+        <item>Remove from followed discussions</item>
+        <item>Report</item>
+    </string-array>
+</resources>

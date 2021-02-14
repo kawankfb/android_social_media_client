@@ -3,7 +3,8 @@
     android:layout_width="match_parent"
     android:paddingBottom="2dp"
     android:layout_margin="0dp"
-    android:paddingEnd="20sp"
+    android:paddingEnd="25sp"
+    android:paddingStart="25sp"
     android:background="@color/colorBackground"
     android:layout_height="wrap_content"
     android:minHeight="75sp"
@@ -66,8 +67,9 @@
             android:gravity="left"
             android:minWidth="100sp"
             android:textSize="18sp"
+            android:autoLink="web|email|phone"
             android:layout_margin="5sp"
-            android:minHeight="75sp"
+            android:minHeight="50sp"
             android:textStyle="bold"
             android:id="@+id/post_text"
             android:layout_height="wrap_content"/>
@@ -98,7 +100,6 @@
         android:layout_alignParentEnd="true"
         android:id="@+id/personal_chatRelativeLayout"
         android:background="@color/colorBackground"
-        android:paddingStart="20sp"
         android:layout_height="wrap_content"
         android:minHeight="75sp"
         android:orientation="horizontal">
@@ -148,7 +149,8 @@
                 android:minWidth="100sp"
                 android:textSize="18sp"
                 android:layout_margin="5sp"
-                android:minHeight="75sp"
+                android:minHeight="50sp"
+                android:autoLink="web|email|phone"
                 android:textStyle="bold"
                 android:id="@+id/personal_post_text"
                 android:layout_height="wrap_content"/>

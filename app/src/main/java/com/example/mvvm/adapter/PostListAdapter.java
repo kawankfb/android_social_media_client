@@ -18,6 +18,7 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.example.mvvm.R;
 import com.example.mvvm.model.PostModel;
 
@@ -58,6 +59,12 @@ public class PostListAdapter extends RecyclerView.Adapter<PostListAdapter.MyView
     @Override
     public void onBindViewHolder(@NonNull PostListAdapter.MyViewHolder holder, int position) {
 
+        View.OnClickListener user_profile_selected_listener=new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                itemListener.onUserProfileClick(postList.get(position).getUser_id());
+            }
+        };
         if (this.postList.get(position).getUser_id()==user_id) {
 
             holder.others.setVisibility(View.INVISIBLE);
@@ -79,8 +86,11 @@ public class PostListAdapter extends RecyclerView.Adapter<PostListAdapter.MyView
                     return true;
                 }
             });
+
+            holder.personal_postNoProfileTextView.setOnClickListener(user_profile_selected_listener);
+            holder.personal_postProfilePicture.setOnClickListener(user_profile_selected_listener);
             Log.d("image_URL", this.postList.get(position).getUrl());
-            Glide.with(context).load(this.postList.get(position).getUrl()).circleCrop().into(holder.personal_postProfilePicture);
+            Glide.with(context).load(this.postList.get(position).getUrl()).circleCrop().diskCacheStrategy(DiskCacheStrategy.NONE).into(holder.personal_postProfilePicture);
             if (holder.personal_postProfilePicture.getDrawable() == null) {
                 String title = this.postList.get(position).getUserName().toString();
                 String[] temp = title.split(" ");
@@ -136,8 +146,11 @@ public class PostListAdapter extends RecyclerView.Adapter<PostListAdapter.MyView
                     return true;
                 }
             });
+
+            holder.postNoProfileTextView.setOnClickListener(user_profile_selected_listener);
+            holder.postProfilePicture.setOnClickListener(user_profile_selected_listener);
             Log.d("image_URL", this.postList.get(position).getUrl());
-            Glide.with(context).load(this.postList.get(position).getUrl()).circleCrop().into(holder.postProfilePicture);
+            Glide.with(context).load(this.postList.get(position).getUrl()).circleCrop().diskCacheStrategy(DiskCacheStrategy.NONE).into(holder.postProfilePicture);
             if (holder.postProfilePicture.getDrawable() == null) {
                 String title = this.postList.get(position).getUserName().toString();
                 String[] temp = title.split(" ");
@@ -207,5 +220,6 @@ public class PostListAdapter extends RecyclerView.Adapter<PostListAdapter.MyView
     public interface ItemListener {
         public void onPostClick(PostModel PostModel);
         public void onPostHold(PostModel PostModel);
+        public void onUserProfileClick(int user_id);
     }
 }

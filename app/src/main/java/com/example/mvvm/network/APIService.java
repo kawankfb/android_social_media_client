@@ -35,6 +35,16 @@ public interface APIService {
     @DELETE("discussion/{discussion_id}")
     Call<ResponseBody> deleteDiscussion(@Path("discussion_id") int discussion_id);
 
+    @DELETE("posts/{post_id}")
+    Call<ResponseBody> deletePost(@Path("post_id") int post_id);
+
+    @POST("followed_discussions")
+    Call<ResponseBody> addToFollowedDiscussion(@Body RequestBody requestBody);
+
+    @DELETE("followed_discussions/{discussion_id}")
+    Call<ResponseBody> removeFromFollowedDiscussions(@Path("discussion_id") int discussion_id);
+
+
     @POST("auth/login")
     Call<ResponseBody> login(@Body RequestBody requestBody);
 

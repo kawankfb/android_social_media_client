@@ -13,7 +13,10 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".EditProfileActivity"></activity>
+        <activity android:name=".ReportActivity"></activity>
+        <activity android:name=".EditDiscussionActivity" />
+        <activity android:name=".ShowUserActivity" />
+        <activity android:name=".EditProfileActivity" />
         <activity android:name=".CreateDiscussionActivity" />
         <activity android:name=".ChatActivity" />
         <activity android:name=".MainActivity" />

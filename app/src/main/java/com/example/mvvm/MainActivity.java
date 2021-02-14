@@ -13,6 +13,9 @@ import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.app.Dialog;
+import android.content.ClipData;
+import android.content.ClipboardManager;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -30,6 +33,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.example.mvvm.adapter.DiscussionListAdapter;
 import com.example.mvvm.model.DiscussionModel;
 import com.example.mvvm.model.UserModel;
@@ -41,8 +45,13 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.util.List;
 
+import okhttp3.MediaType;
+import okhttp3.RequestBody;
 import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -101,7 +110,10 @@ drawerLayout.closeDrawer(GravityCompat.START);
                 if (discussionModels != null) {
                     discussionModelList = discussionModels;
                     adapter.setDiscussionList(discussionModels);
-                    noDiscussionFound.setVisibility(View.INVISIBLE);
+                    if (discussionModels.size()==0)
+                    noDiscussionFound.setVisibility(View.VISIBLE);
+                    else
+                        noDiscussionFound.setVisibility(View.INVISIBLE);
                 } else {
                     noDiscussionFound.setVisibility(View.VISIBLE);
                 }
@@ -139,7 +151,7 @@ drawerLayout.closeDrawer(GravityCompat.START);
                     name.setText(user.getName());
                     email.setText(user.getEmail());
                     if (user!=null && user.getProfilePreview()!=null)
-                        Glide.with(getContext()).load(user.getProfilePreview()).circleCrop().into(user_profile_picture);
+                        Glide.with(getContext()).load(user.getProfilePreview()).diskCacheStrategy(DiskCacheStrategy.NONE).circleCrop().into(user_profile_picture);
                 }
                 else {
                     logOut();
@@ -165,41 +177,172 @@ drawerLayout.closeDrawer(GravityCompat.START);
     public void onDiscussionClick(DiscussionModel discussionModel) {
         Intent intent =new Intent(this,ChatActivity.class);
         intent.putExtra("EXTRA_DISCUSSION_ID", discussionModel.getDiscussion_id());
+        intent.putExtra("EXTRA_DISCUSSION_URL", discussionModel.getUrl());
+        intent.putExtra("EXTRA_DISCUSSION_TITLE", discussionModel.getTitle());
         intent.putExtra("USER_ID", user.getId());
         startActivity(intent);
-//                Toast.makeText(this,"Clicked Discussion : "+discussionModel.getDiscussion_id(),Toast.LENGTH_LONG).show();
-//        viewModel.makeApiCall();
     }
 
     @Override
     public void onDiscussionHold(DiscussionModel discussionModel) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this,R.style.MyAlertDialogStyle);
+        builder.setTitle(R.string.choose_action);
         if(selectedPage.equals("personalDiscussions")){
 
-            AlertDialog.Builder builder=new AlertDialog.Builder(this);
-            builder.setTitle("delete");
-            builder.setMessage("Are you sure you want to delete "+discussionModel.getTitle()+" ?");
-            builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
-                public void onClick(DialogInterface dialog, int id) {
-                    deleteDiscussion(discussionModel.getDiscussion_id());
-                    viewModel.makeApiCall(selectedPage);
-                }
-            });
-            builder.setNegativeButton("No", new DialogInterface.OnClickListener() {
-                public void onClick(DialogInterface dialog, int id) {
-                    //  Action for 'NO' Button
-                    dialog.cancel();
-                    Toast.makeText(getApplicationContext(),"you chose not to delete "+discussionModel.getTitle(),
-                            Toast.LENGTH_SHORT).show();
-                }
-            });
-            AlertDialog alert = builder.create();
-            //Setting the title manually
-            alert.setTitle("AlertDialogExample");
-            alert.show();
-        }
-        else
-        Toast.makeText(this,"Clicked Discussion : "+discussionModel.getDiscussion_id(),Toast.LENGTH_LONG).show();
+            builder.setItems(R.array.personal_discussion_options, new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int which) {
+                    switch (which){
+                        case 0:
+                            AlertDialog.Builder alertBuilder=new AlertDialog.Builder(getContext(),R.style.MyAlertDialogStyle);
+                            alertBuilder.setTitle("delete");
+                            alertBuilder.setMessage("Are you sure you want to delete "+discussionModel.getTitle()+" ?");
+                            alertBuilder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                                public void onClick(DialogInterface dialog, int id) {
+                                    deleteDiscussion(discussionModel.getDiscussion_id());
+                                    viewModel.makeApiCall(selectedPage);
+                                }
+                            });
+                            alertBuilder.setNegativeButton("No", new DialogInterface.OnClickListener() {
+                                public void onClick(DialogInterface dialog, int id) {
+                                    dialog.cancel();
+                                }
+                            });
+                            AlertDialog alert = alertBuilder.create();
+                            //Setting the title manually
+                            alert.setTitle("Delete Discussion");
+                            alert.show();
+                            break;
 
+                        case 1:
+                            Intent intent =new Intent(getContext(),EditDiscussionActivity.class);
+                            intent.putExtra("EXTRA_DISCUSSION_ID",discussionModel.getDiscussion_id());
+                            intent.putExtra("EXTRA_DISCUSSION_TITLE",discussionModel.getTitle());
+                            intent.putExtra("EXTRA_DISCUSSION_URL",discussionModel.getUrl());
+                            startActivity(intent);
+                            break;
+                    }
+                }
+            });
+
+
+        }
+        else if (selectedPage.equals("trendingDiscussions")){
+
+            builder.setItems(R.array.trending_discussion_options, new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int which) {
+                    switch (which){
+                        case 0:
+                            addToFollowedDiscussions(discussionModel.getDiscussion_id());
+                            break;
+
+                        case 1:
+                            Intent intent=new Intent(getContext(),ReportActivity.class);
+                            intent.putExtra("EXTRA_REPORT_TYPE","discussion_report");
+                            intent.putExtra("EXTRA_DISCUSSION_ID",discussionModel.getDiscussion_id());
+                            startActivity(intent);
+                            break;
+                    }
+                }
+            });
+        }
+        else if (selectedPage.equals("followedDiscussions")){
+            builder.setItems(R.array.followed_discussion_options, new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int which) {
+                    switch (which){
+                        case 0:
+                            removeFromFollowedDiscussions(discussionModel.getDiscussion_id());
+                            break;
+
+                        case 1:
+                            Intent intent=new Intent(getContext(),ReportActivity.class);
+                            intent.putExtra("EXTRA_REPORT_TYPE","discussion_report");
+                            intent.putExtra("EXTRA_DISCUSSION_ID",discussionModel.getDiscussion_id());
+                            startActivity(intent);
+                            break;
+                    }
+                }
+            });
+
+        }
+        Dialog dialog= builder.create();
+        dialog.show();
+    }
+
+    private void addToFollowedDiscussions(int discussion_id) {
+        String jsonString="{}";
+        JSONObject jsonObject=new JSONObject();
+        try {
+            jsonObject.put("discussion_id",discussion_id);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        jsonString=jsonObject.toString();
+        RequestBody requestBody =RequestBody.create(MediaType.parse("application/json"),jsonString);
+        APIService apiService = RetrofitInstance.getRetrofitClient().create(APIService.class);
+        apiService.addToFollowedDiscussion(requestBody).enqueue(new Callback<ResponseBody>() {
+            @Override
+            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                try {
+                    if (!response.isSuccessful())
+                    {
+                        Toast.makeText(getContext(),"This discussion is already present in your followed discussions",Toast.LENGTH_SHORT).show();
+                        return;
+                    }
+                    String json=response.body().string();
+                    JsonElement jsonElement = new JsonParser().parse(json);
+                    JsonObject jsonObject = jsonElement.getAsJsonObject();
+                    if (!jsonObject.has("message")){
+                        Toast.makeText(getContext(),"This discussion is already present in your followed discussions",Toast.LENGTH_SHORT).show();
+                        return;
+                    }
+                    Toast.makeText(getContext(),"This discussion was successfully added to your followed discussions",Toast.LENGTH_SHORT).show();
+
+                }catch (Exception e){
+                    Toast.makeText(getContext(),"Something went wrong please try again",Toast.LENGTH_SHORT).show();
+
+                }
+            }
+
+            @Override
+            public void onFailure(Call<ResponseBody> call, Throwable t) {
+                Toast.makeText(getContext(),"Something went wrong please try again",Toast.LENGTH_SHORT).show();
+                return;
+            }
+        });
+    }
+
+    private void removeFromFollowedDiscussions(int discussion_id) {
+
+        APIService apiService = RetrofitInstance.getRetrofitClient().create(APIService.class);
+        apiService.removeFromFollowedDiscussions(discussion_id).enqueue(new Callback<ResponseBody>() {
+            @Override
+            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                try {
+                    if (!response.isSuccessful())
+                    {
+                        Toast.makeText(getContext(),"Removal was unsuccessful , error message : "+response.errorBody().string(),Toast.LENGTH_SHORT).show();
+                        return;
+                    }
+                    String json=response.body().string();
+                    JsonElement jsonElement = new JsonParser().parse(json);
+                    JsonObject jsonObject = jsonElement.getAsJsonObject();
+                    if (!jsonObject.has("message")){
+                        return;
+                    }
+                    Toast.makeText(getContext(),"This discussion was successfully removed your followed discussions",Toast.LENGTH_SHORT).show();
+                    viewModel.makeApiCall(selectedPage);
+                }catch (Exception e){
+                    Toast.makeText(getContext(),"Something went wrong please try again",Toast.LENGTH_SHORT).show();
+
+                    return;
+                }
+            }
+            @Override
+            public void onFailure(Call<ResponseBody> call, Throwable t) {
+                Toast.makeText(getContext(),"Something went wrong please try again",Toast.LENGTH_SHORT).show();
+                return;
+            }
+        });
     }
 
 
@@ -279,7 +422,7 @@ drawerLayout.closeDrawer(GravityCompat.START);
                 try {
                     if (!response.isSuccessful())
                     {
-                        Toast.makeText(getContext(),"Delete Unsuccessful , error message : "+response.errorBody().string(),Toast.LENGTH_LONG).show();
+                        Toast.makeText(getContext(),"Delete Unsuccessful , error message : "+response.errorBody().string(),Toast.LENGTH_SHORT).show();
                         return;
                     }
                     String json=response.body().string();

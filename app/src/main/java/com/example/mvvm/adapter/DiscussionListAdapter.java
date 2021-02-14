@@ -16,6 +16,7 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.example.mvvm.R;
 import com.example.mvvm.model.DiscussionModel;
 
@@ -62,7 +63,7 @@ public class DiscussionListAdapter extends RecyclerView.Adapter<DiscussionListAd
             }
         });
         Log.d("image_URL",this.discussionList.get(position).getUrl());
-    Glide.with(context).load(this.discussionList.get(position).getUrl()).circleCrop().into(holder.discussionProfilePicture);
+    Glide.with(context).load(this.discussionList.get(position).getUrl()).diskCacheStrategy(DiskCacheStrategy.NONE).circleCrop().into(holder.discussionProfilePicture);
     Log.d("no_profile_check","before if");
     if (holder.discussionProfilePicture.getDrawable()==null){
         Log.d("no_profile_check","after if");
