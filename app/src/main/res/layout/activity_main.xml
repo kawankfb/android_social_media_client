@@ -36,6 +36,15 @@
         android:textStyle="bold"
         android:textSize="25sp"/>
 
+    <ListView
+        android:id="@+id/categoriesListView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/mainToolbar"
+        android:layout_above="@id/mainNavigationLayout"
+        android:visibility="invisible"
+        android:background="@color/colorBackground"
+        android:gravity="center"/>
     <LinearLayout
         android:id="@+id/mainNavigationLayout"
         android:layout_width="match_parent"

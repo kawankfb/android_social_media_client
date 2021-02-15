@@ -5,6 +5,7 @@ import android.util.Log;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
+import com.example.mvvm.model.CategoryModel;
 import com.example.mvvm.model.DiscussionModel;
 import com.example.mvvm.network.APIService;
 import com.example.mvvm.network.RetrofitInstance;
@@ -80,6 +81,24 @@ public class DiscussionListViewModel extends ViewModel {
     }
 
     private void getTrending(){
+        APIService apiService = RetrofitInstance.getRetrofitClient().create(APIService.class);
+        Call<List<DiscussionModel>> call=apiService.getDiscussionList();
+        call.enqueue(new Callback<List<DiscussionModel>>() {
+            @Override
+            public void onResponse(Call<List<DiscussionModel>> call, Response<List<DiscussionModel>> response) {
+                Log.d("laravel_response",response.toString());
+                discussionList.postValue(response.body());
+            }
+
+            @Override
+            public void onFailure(Call<List<DiscussionModel>> call, Throwable t) {
+                Log.d("laravel_response","request failed");
+                discussionList.postValue(null);
+            }
+        });
+    }
+
+    public void makeCategoryApiCall(CategoryModel categoryModel) {
         APIService apiService = RetrofitInstance.getRetrofitClient().create(APIService.class);
         Call<List<DiscussionModel>> call=apiService.getDiscussionList();
         call.enqueue(new Callback<List<DiscussionModel>>() {

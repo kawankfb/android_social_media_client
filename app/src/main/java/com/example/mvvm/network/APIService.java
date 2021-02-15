@@ -1,4 +1,5 @@
 package com.example.mvvm.network;
+import com.example.mvvm.model.CategoryModel;
 import com.example.mvvm.model.DiscussionModel;
 import com.example.mvvm.model.PostModel;
 import com.example.mvvm.model.UserModel;
@@ -28,6 +29,9 @@ public interface APIService {
     @GET("me")
     Call<UserModel> getPersonalInformation();
 
+    @GET("category")
+    Call<List<CategoryModel>> getCategoriesList();
+
 
     @GET("posts/{discussion_id}")
     Call<List<PostModel>> getPostList(@Path("discussion_id") int discussion_id);
@@ -56,4 +60,8 @@ public interface APIService {
 
     @POST("posts")
     Call<ResponseBody> createPost(@Body RequestBody requestBody);
+
+    @POST("report")
+    Call<ResponseBody> report(@Body RequestBody requestBody);
+
 }

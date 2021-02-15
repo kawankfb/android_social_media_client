@@ -30,4 +30,7 @@
     <string name="log_out">Log out</string>
     <string name="edit_profile">Edit profile</string>
     <string name="choose_action">"Choose an action"</string>
+    <string name="provide_explanation">Please provide an explanation for your report</string>
+    <string name="send">send</string>
+    <string name="explanation">Explanation</string>
 </resources>

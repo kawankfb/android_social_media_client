@@ -132,9 +132,7 @@ public class ChatActivity extends AppCompatActivity implements PostListAdapter.I
         noDiscussionProfileTextView=(TextView)findViewById(R.id.noChatDiscussionProfileTextView);
         discussionProfilePicture=(ImageView)findViewById(R.id.chat_discussion_profile_picture);
         discussionTitle=(TextView)findViewById(R.id.chatDiscussionTitleTextView);
-
         setDiscussionInformation(getIntent().getStringExtra("EXTRA_DISCUSSION_URL"),getIntent().getStringExtra("EXTRA_DISCUSSION_TITLE"));
-
         RecyclerView postRecyclerView = (RecyclerView) findViewById(R.id.post_list_view);
         final TextView noPostFound = (TextView) findViewById(R.id.noPostFoundTextView);
         noPostFound.setVisibility(View.INVISIBLE);

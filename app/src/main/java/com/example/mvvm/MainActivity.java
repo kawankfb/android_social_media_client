@@ -27,15 +27,20 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.example.mvvm.adapter.DiscussionListAdapter;
+import com.example.mvvm.model.CategoryModel;
 import com.example.mvvm.model.DiscussionModel;
+import com.example.mvvm.model.PostModel;
 import com.example.mvvm.model.UserModel;
 import com.example.mvvm.network.APIService;
 import com.example.mvvm.network.RetrofitInstance;
@@ -48,6 +53,7 @@ import com.google.gson.JsonParser;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import okhttp3.MediaType;
@@ -67,6 +73,8 @@ public class MainActivity extends AppCompatActivity implements DiscussionListAda
     Toolbar toolbar;
     String selectedPage="trendingDiscussions";
     UserModel user;
+    ListView categoriesListView;
+    boolean choosingDiscussionOutOfCategory;
 
     DrawerLayout drawerLayout;
     NavigationView navigationView;
@@ -75,7 +83,11 @@ public class MainActivity extends AppCompatActivity implements DiscussionListAda
     public void onBackPressed() {
         if (drawerLayout.isDrawerOpen(GravityCompat.START)){
 drawerLayout.closeDrawer(GravityCompat.START);
-        }else
+        }else if (choosingDiscussionOutOfCategory){
+            categoriesListView.setVisibility(View.VISIBLE);
+            choosingDiscussionOutOfCategory=false;
+        }
+        else
         super.onBackPressed();
     }
 
@@ -88,9 +100,10 @@ drawerLayout.closeDrawer(GravityCompat.START);
         toolbar=(Toolbar)findViewById(R.id.mainToolbar);
         toolbar.setTitle("Discussions");
         setSupportActionBar(toolbar);
-
+        choosingDiscussionOutOfCategory=false;
         drawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
         navigationView = (NavigationView) findViewById(R.id.navigation_drawer_view);
+        categoriesListView=(ListView)findViewById(R.id.categoriesListView);
         navigationView.setNavigationItemSelectedListener(this);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(this,drawerLayout,toolbar,R.string.open_drawer,R.string.close_drawer);
         drawerLayout.setDrawerListener(toggle);
@@ -347,10 +360,11 @@ drawerLayout.closeDrawer(GravityCompat.START);
 
 
     public void changePage(View view) {
+        categoriesListView.setVisibility(View.INVISIBLE);
         ImageView temp=(ImageView)view;
 
         String tag=temp.getTag().toString();
-        if (selectedPage.equals(tag))
+        if (selectedPage.equals(tag) && !selectedPage.equals("categorizedDiscussions"))
             return;
         Log.d("clicked tag is :",tag);
         Drawable background = getResources().getDrawable( R.drawable.bg_edittext);
@@ -361,9 +375,46 @@ drawerLayout.closeDrawer(GravityCompat.START);
         background = getResources().getDrawable( R.drawable.login_signup_button);
         temp.setBackground(background);
         selectedPage=tag;
-        viewModel.makeApiCall(selectedPage);
-//        Intent intent=new Intent(this,CreateDiscussionActivity.class);
-//        startActivity(intent);
+        if (!selectedPage.equals("categorizedDiscussions")) {
+            viewModel.makeApiCall(selectedPage);
+            choosingDiscussionOutOfCategory=false;
+        }
+        else {
+            initializeCategories();
+        }
+    }
+
+    private void initializeCategories() {
+        ArrayList<CategoryModel> categoriesList=new ArrayList<CategoryModel>();
+
+        ArrayAdapter<CategoryModel> arrayAdapter=new ArrayAdapter<CategoryModel>(getContext(),R.layout.list_item,categoriesList);
+        categoriesListView.setAdapter(arrayAdapter);
+        categoriesListView.setVisibility(View.VISIBLE);
+        categoriesListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                categoriesListView.setVisibility(View.INVISIBLE);
+                viewModel.makeCategoryApiCall((CategoryModel) parent.getItemAtPosition(position));
+                choosingDiscussionOutOfCategory=true;
+            }
+        });
+        APIService apiService = RetrofitInstance.getNotAuthenticatedRetrofitClient().create(APIService.class);
+        Call<List<CategoryModel>> call=apiService.getCategoriesList();
+        call.enqueue(new Callback<List<CategoryModel>>() {
+            @Override
+            public void onResponse(Call<List<CategoryModel>> call, Response<List<CategoryModel>> response) {
+                Log.d("laravel_post_response",response.toString());
+                categoriesList.addAll(response.body());
+                arrayAdapter.notifyDataSetChanged();
+            }
+
+            @Override
+            public void onFailure(Call<List<CategoryModel>> call, Throwable t) {
+                Log.d("laravel_post_response",t.toString());
+
+            }
+        });
+
     }
 
     @Override
