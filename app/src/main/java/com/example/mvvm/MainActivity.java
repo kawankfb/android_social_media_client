@@ -71,6 +71,23 @@ public class MainActivity extends AppCompatActivity implements DiscussionListAda
     EditText titleEditText;
     CountDownTimer countDownTimer;
     Toolbar toolbar;
+    ImageView user_profile_picture;
+
+    @Override
+    protected void onResume() {
+        countDownTimer.start();
+        if (user!=null && user.getProfilePreview()!=null)
+            Glide.with(getContext()).load(user.getProfilePreview()).diskCacheStrategy(DiskCacheStrategy.NONE).skipMemoryCache(true).circleCrop().into(user_profile_picture);
+
+        super.onResume();
+    }
+
+    @Override
+    protected void onPause() {
+        countDownTimer.cancel();
+        super.onPause();
+    }
+
     String selectedPage="trendingDiscussions";
     UserModel user;
     ListView categoriesListView;
@@ -158,13 +175,13 @@ drawerLayout.closeDrawer(GravityCompat.START);
                     Log.d("laravel_response",response.body().toString());
                     user=response.body();
 
-                    ImageView user_profile_picture=(ImageView)findViewById(R.id.user_profile_image_view);
+                    user_profile_picture = (ImageView)findViewById(R.id.user_profile_image_view);
                     TextView name=(TextView)findViewById(R.id.navigation_name_text_view);
                     TextView email=(TextView)findViewById(R.id.navigation_email_text_view);
                     name.setText(user.getName());
                     email.setText(user.getEmail());
                     if (user!=null && user.getProfilePreview()!=null)
-                        Glide.with(getContext()).load(user.getProfilePreview()).diskCacheStrategy(DiskCacheStrategy.NONE).circleCrop().into(user_profile_picture);
+                        Glide.with(getContext()).load(user.getProfilePreview()).diskCacheStrategy(DiskCacheStrategy.NONE).skipMemoryCache(true).circleCrop().into(user_profile_picture);
                 }
                 else {
                     logOut();
@@ -418,12 +435,6 @@ drawerLayout.closeDrawer(GravityCompat.START);
     }
 
     @Override
-    protected void onPostResume() {
-        super.onPostResume();
-        viewModel.makeApiCall(selectedPage);
-    }
-
-    @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu_followed,menu);
 
@@ -525,7 +536,11 @@ drawerLayout.closeDrawer(GravityCompat.START);
 
                 break;
             case R.id.edit_profile :
-
+                Intent intent1=new Intent(getContext(),EditProfileActivity.class);
+                intent1.putExtra("USER_ID",user.getId());
+                intent1.putExtra("USER_PROFILE_ADDRESS",user.getProfile());
+                intent1.putExtra("USER_PROFILE_PREVIEW_ADDRESS",user.getProfilePreview());
+                startActivity(intent1);
                 break;
         }
         drawerLayout.closeDrawer(GravityCompat.START);

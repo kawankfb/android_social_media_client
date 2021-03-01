@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">MVVM</string>
+    <string name="app_name">Discussion</string>
     <string name="preference_file_key">ir.kawankfb</string>
     <string name="saved_access_token">access_token</string>
     <string name="log_in">log in</string>
@@ -33,4 +33,9 @@
     <string name="provide_explanation">Please provide an explanation for your report</string>
     <string name="send">send</string>
     <string name="explanation">Explanation</string>
+    <string name="joined_at">Joined at :</string>
+    <string name="report_this_user">Report this User</string>
+    <string name="report_this_discussion">Report this discussion</string>
+    <string name="created_at">Created at :</string>
+    <string name="discussion_title">Discussion Title</string>
 </resources>

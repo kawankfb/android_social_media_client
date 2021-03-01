@@ -1,9 +1,40 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/colorBackground"
     tools:context=".EditProfileActivity">
-
-</androidx.constraintlayout.widget.ConstraintLayout>
+    <RelativeLayout
+        android:layout_width="60sp"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentStart="true"
+        android:background="@color/colorBackground"
+        android:id="@+id/user_profile_layout_EditProfile"
+        android:layout_marginStart="50sp"
+        android:onClick="editProfilePicture"
+        android:layout_marginTop="50sp"
+        android:layout_height="60sp">
+        <ImageView
+            android:layout_width="match_parent"
+            android:layout_alignParentTop="true"
+            android:layout_alignParentStart="true"
+            android:layout_height="match_parent"
+            android:visibility="invisible"
+            android:id="@+id/user_profile_picture_EditProfile"
+            />
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_alignParentTop="true"
+            android:layout_alignParentStart="true"
+            android:id="@+id/noUserProfileTextView_EditProfile"
+            android:textSize="25sp"
+            android:gravity="center"
+            android:visibility="visible"
+            android:textColor="#FFFFFF"
+            android:background="@drawable/profile_default"
+            />
+    </RelativeLayout>
+</RelativeLayout>

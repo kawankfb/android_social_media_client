@@ -10,6 +10,7 @@
     <RelativeLayout
         android:layout_height="match_parent"
         android:layout_width="0sp"
+        android:padding="5sp"
         android:background="@color/colorBackground"
     android:layout_weight="0.2">
         <ImageView
@@ -22,7 +23,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:id="@+id/noDiscussionProfileTextView"
-            android:textSize="25sp"
+            android:textSize="20sp"
             android:gravity="center"
             android:visibility="visible"
             android:textColor="#FFFFFF"
@@ -50,6 +51,7 @@
             android:layout_width="match_parent"
             android:layout_weight="0.4"
             android:textSize="18sp"
+            android:visibility="invisible"
             android:text="yo call me bro"
             android:id="@+id/discussion_last_message"
             android:layout_height="0sp"/>
@@ -69,6 +71,7 @@
             android:textSize="15sp"
             android:textColor="@color/hintColor"
             android:textStyle="bold"
+            android:visibility="invisible"
             android:id="@+id/discussion_last_message_time"
             android:layout_height="0sp"/>
         <TextView
@@ -78,6 +81,7 @@
             android:textSize="15sp"
             android:textStyle="bold"
             android:text="999+"
+            android:visibility="invisible"
             android:textColor="@color/hintColor"
             android:id="@+id/discussion_number_of_unread_messages"
             android:layout_height="0sp"/>

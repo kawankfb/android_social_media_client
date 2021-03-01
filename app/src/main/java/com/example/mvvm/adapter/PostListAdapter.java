@@ -71,7 +71,7 @@ public class PostListAdapter extends RecyclerView.Adapter<PostListAdapter.MyView
             holder.personal.setVisibility(View.VISIBLE);
 
 
-            holder.personal_text.setText(this.postList.get(position).getText().toString());
+            holder.personal_text.setText(this.postList.get(position).getText());
             holder.personal_post_last_edit_time.setText(this.postList.get(position).getUpdated_at());
             holder.itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -131,7 +131,7 @@ public class PostListAdapter extends RecyclerView.Adapter<PostListAdapter.MyView
             holder.personal.setVisibility(View.INVISIBLE);
 
 
-            holder.text.setText(this.postList.get(position).getText().toString());
+            holder.text.setText(this.postList.get(position).getText());
             holder.post_last_edit_time.setText(this.postList.get(position).getUpdated_at());
             holder.itemView.setOnClickListener(new View.OnClickListener() {
                 @Override

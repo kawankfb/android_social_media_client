@@ -36,6 +36,13 @@ public class UserModel {
         this.id         =   userModel.id;
     }
 
+    public UserModel(String created_at, String name, String profile, String biography) {
+        this.created_at = created_at;
+        this.name = name;
+        this.profile = profile;
+        this.biography = biography;
+    }
+
     public String getProfilePreview(){
         return RetrofitInstance.BASE_URL+"profile_picture/"+id;
     }

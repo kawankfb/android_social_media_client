@@ -6,13 +6,16 @@ import com.example.mvvm.model.UserModel;
 
 import java.util.List;
 
+import okhttp3.MultipartBody;
 import okhttp3.RequestBody;
 import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.http.Body;
 import retrofit2.http.DELETE;
 import retrofit2.http.GET;
+import retrofit2.http.Multipart;
 import retrofit2.http.POST;
+import retrofit2.http.Part;
 import retrofit2.http.Path;
 
 public interface APIService {
@@ -28,6 +31,13 @@ public interface APIService {
 
     @GET("me")
     Call<UserModel> getPersonalInformation();
+
+    @GET("users/{user_id}")
+    Call<UserModel> getUserInformation(@Path("user_id") int user_id);
+
+    @GET("discussion/{discussion_id}")
+    Call<DiscussionModel> getDiscussionInformation(@Path("discussion_id") int discussion_id);
+
 
     @GET("category")
     Call<List<CategoryModel>> getCategoriesList();
@@ -63,5 +73,14 @@ public interface APIService {
 
     @POST("report")
     Call<ResponseBody> report(@Body RequestBody requestBody);
+
+    @Multipart
+    @POST("files")
+    Call <ResponseBody>uploadFile(
+            @Part MultipartBody.Part file,
+            @Part("file") RequestBody name,
+            @Part("setUserProfile") RequestBody setUserProfile,
+            @Part("setDiscussionProfile") RequestBody setDiscussionProfile
+    );
 
 }

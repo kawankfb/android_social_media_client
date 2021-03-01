@@ -21,6 +21,7 @@
             android:padding="3sp"
             android:src="@drawable/ic_home_black_24dp"
             android:adjustViewBounds="true"
+            android:onClick="onDiscussionProfileClick"
             android:id="@+id/chatDiscussionProfileLayout"
             android:layout_height="match_parent">
             <ImageView
@@ -54,6 +55,7 @@
             android:gravity="center_vertical|start"
             android:id="@+id/chatDiscussionTitleTextView"
             android:textColor="@color/colorBackground"
+            android:onClick="onDiscussionProfileClick"
             />
     </androidx.appcompat.widget.Toolbar>
     <androidx.recyclerview.widget.RecyclerView
@@ -88,7 +90,7 @@
             android:layout_weight="0.15"
             android:src="@drawable/baseline_attach_file_48"
             android:padding="5sp"
-            android:onClick="sendPost"
+            android:onClick="pickFile"
             android:background="@drawable/login_signup_button"/>
         <EditText
             android:layout_width="0dp"

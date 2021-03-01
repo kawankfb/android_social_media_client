@@ -24,4 +24,9 @@
         <item>Remove from followed discussions</item>
         <item>Report</item>
     </string-array>
+    <string-array name="edit_profile_picture_options" >
+        <item>Open</item>
+        <item>Delete</item>
+        <item>Replace</item>
+    </string-array>
 </resources>

@@ -1,6 +1,7 @@
 package com.example.mvvm.network;
 
 import java.io.IOException;
+import java.util.concurrent.TimeUnit;
 
 import okhttp3.Interceptor;
 import okhttp3.OkHttpClient;
@@ -10,8 +11,9 @@ import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
 public class RetrofitInstance {
-    public static String BASE_URL="http://192.168.43.17:8080/api/";
+    public static String BASE_URL="http://185.231.115.253/api/";
     private static Retrofit retrofit;
+    private static Retrofit fileRetrofit;
     private static Retrofit notAuthenticatedRetrofit;
 
     public static void setToken(String token) {
@@ -32,6 +34,25 @@ public class RetrofitInstance {
                     return chain.proceed(newRequest);
                 }
             }).build();
+            retrofit =new Retrofit.Builder().client(client).baseUrl(BASE_URL).addConverterFactory(GsonConverterFactory.create()).build();
+            return retrofit;
+        }
+        return retrofit;
+    }
+    public static Retrofit getFileRetrofitClient() {
+        token=getToken();
+        if (retrofit==null)
+        {
+            OkHttpClient client = new OkHttpClient.Builder().addInterceptor(new Interceptor() {
+                @Override
+                public Response intercept(Chain chain) throws IOException {
+                    Request newRequest  = chain.request().newBuilder()
+                            .addHeader("Authorization", "Bearer " + token)
+                            .build();
+                    return chain.proceed(newRequest);
+                }
+            }).connectTimeout(60, TimeUnit.SECONDS)
+                    .readTimeout(60,TimeUnit.SECONDS).build();
             retrofit =new Retrofit.Builder().client(client).baseUrl(BASE_URL).addConverterFactory(GsonConverterFactory.create()).build();
             return retrofit;
         }

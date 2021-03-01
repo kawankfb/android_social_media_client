@@ -1,27 +1,38 @@
 package com.example.mvvm;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.Manifest;
+import android.app.Activity;
 import android.app.Dialog;
 import android.content.ClipData;
 import android.content.ClipboardManager;
+import android.content.ContentProvider;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.database.Cursor;
 import android.graphics.Color;
 import android.graphics.ColorFilter;
 import android.graphics.LightingColorFilter;
 import android.graphics.drawable.Drawable;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.CountDownTimer;
+import android.os.FileUtils;
+import android.provider.MediaStore;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
@@ -47,9 +58,20 @@ import com.google.gson.JsonParser;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.DataOutput;
+import java.io.DataOutputStream;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.List;
 
 import okhttp3.MediaType;
+import okhttp3.MultipartBody;
 import okhttp3.RequestBody;
 import okhttp3.ResponseBody;
 import retrofit2.Call;
@@ -57,6 +79,9 @@ import retrofit2.Callback;
 import retrofit2.Response;
 
 public class ChatActivity extends AppCompatActivity implements PostListAdapter.ItemListener {
+    private static final int PICKFILE_RESULT_CODE = 1;
+    private static final int REQUEST_READ_PERMISSION_FOR_ATTACTCHMENT = 2;
+
     @Override
     public void onBackPressed() {
         super.onBackPressed();
@@ -70,9 +95,31 @@ public class ChatActivity extends AppCompatActivity implements PostListAdapter.I
     private PostListViewModel viewModel;
     CountDownTimer countDownTimer;
     Toolbar toolbar;
+
+    @Override
+    protected void onResume() {
+        countDownTimer.start();
+        super.onResume();
+    }
+
+    @Override
+    protected void onPause() {
+        countDownTimer.cancel();
+        super.onPause();
+    }
+
     TextView noDiscussionProfileTextView;
     ImageView discussionProfilePicture;
     TextView discussionTitle;
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        if (requestCode == REQUEST_READ_PERMISSION_FOR_ATTACTCHMENT)
+            if (grantResults.length > 0
+                    && grantResults[0] == PackageManager.PERMISSION_GRANTED){}
+
+    }
 
     public void sendPost(View view) {
         String text = postEditText.getText().toString();
@@ -263,7 +310,9 @@ public class ChatActivity extends AppCompatActivity implements PostListAdapter.I
         startActivity(intent);
     }
     public void onDiscussionProfileClick(View view){
-
+        Intent intent=new Intent(this,ShowDiscussionInformationActivity.class);
+        intent.putExtra("EXTRA_DISCUSSION_ID",discussion_id);
+        startActivity(intent);
     }
 
     private void deletePost(PostModel postModel){
@@ -362,5 +411,98 @@ public class ChatActivity extends AppCompatActivity implements PostListAdapter.I
             noDiscussionProfileTextView.setVisibility(View.INVISIBLE);
             discussionProfilePicture.setVisibility(View.VISIBLE);
         }
+    }
+
+    private void sendFile(File file){
+        RequestBody requestFile =
+                RequestBody.create(
+                        MediaType.parse("*/*"),
+                        file
+                );
+
+        // MultipartBody.Part is used to send also the actual file name
+        MultipartBody.Part body =
+                MultipartBody.Part.createFormData("file", file.getName(), requestFile);
+
+        RequestBody setUserProfile =RequestBody.create(MediaType.parse("text/plain"), "false");
+
+        RequestBody setDiscussionProfile =RequestBody.create(MediaType.parse("text/plain"), "false");
+
+        RequestBody filename = RequestBody.create(MediaType.parse("text/plain"), file.getName());
+
+        APIService apiService = RetrofitInstance.getFileRetrofitClient().create(APIService.class);
+        apiService.uploadFile(body,filename,setUserProfile,setDiscussionProfile).enqueue(new Callback<ResponseBody>() {
+            @Override
+            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                try {
+                    if (!response.isSuccessful())
+                    {
+                        Toast.makeText(getContext(),"Upload unsuccessful"+response.errorBody().string(),Toast.LENGTH_LONG).show();
+                        return;
+                    }
+                    String json=response.body().string();
+                    JsonElement jsonElement = new JsonParser().parse(json);
+                    JsonObject jsonObject = jsonElement.getAsJsonObject();
+                    if (!jsonObject.has("message")){
+                        return;
+                    }
+                    Toast.makeText(getContext(),"Upload successful",Toast.LENGTH_LONG).show();
+
+                }catch (Exception e){
+                    return;
+                }
+            }
+
+            @Override
+            public void onFailure(Call<ResponseBody> call, Throwable t)
+            {
+                Log.d("upload_file",t.getMessage());
+                Toast.makeText(getContext(),"Upload Unsuccessful , network error",Toast.LENGTH_LONG).show();
+                return;
+            }
+        });
+    }
+
+    public void pickFile(View view) {
+        if(ContextCompat.checkSelfPermission(this,
+                Manifest.permission.READ_EXTERNAL_STORAGE)
+                != PackageManager.PERMISSION_GRANTED)
+        {
+            // Permission is not granted
+            ActivityCompat
+                    .requestPermissions(
+                            ChatActivity.this,
+                            new String[] { Manifest.permission.READ_EXTERNAL_STORAGE },
+                            REQUEST_READ_PERMISSION_FOR_ATTACTCHMENT);
+        }
+        else {
+            Intent chooseFile = new Intent(Intent.ACTION_PICK);
+            chooseFile.setType("*/*");
+            chooseFile = Intent.createChooser(chooseFile, "Choose a file");
+            startActivityForResult(chooseFile, PICKFILE_RESULT_CODE);
+        }
+
+    }
+    public String getRealPathFromURI(Uri contentUri)
+    {
+        String[] proj = { MediaStore.Audio.Media.DATA };
+        Cursor cursor = managedQuery(contentUri, proj, null, null, null);
+        int column_index = cursor.getColumnIndexOrThrow(MediaStore.Audio.Media.DATA);
+        cursor.moveToFirst();
+        return cursor.getString(column_index);
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == PICKFILE_RESULT_CODE && resultCode == Activity.RESULT_OK) {
+            Uri selectedFile = data.getData();
+            String path=getRealPathFromURI(selectedFile);
+                Log.d("file_upload",path);
+                File file =new File(path);
+            Log.d("file_upload data",file.length()+"");
+            sendFile(file);
+        }
+
     }
 }
